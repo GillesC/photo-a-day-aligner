@@ -42,7 +42,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', help='Print debug information',
                         action='store_true')
-    parser.add_argument('--config', help='Config file path', type=unicode,
+    parser.add_argument('--config', help='Config file path', type=str,
                         default=CONFIG_FILE_NAME)
     parser.add_argument('--aligned-path',
                         help='Path where aligned images will be stored')
@@ -51,10 +51,10 @@ def parse_args():
                              'images.')
     parser.add_argument('--predictor-path',
                         help='DLib face predictor dat file',
-                        type=unicode)
+                        type=str)
     parser.add_argument('--filtered-files',
                         help='File to write filtered files to',
-                        type=unicode)
+                        type=str)
 
     subparsers = parser.add_subparsers(help='Sub-command help')
 
@@ -66,7 +66,7 @@ def parse_args():
     align_parser = subparsers.add_parser('align',
                                          help='align a set of images')
     align_parser.add_argument('--input-glob',
-                              help='Input files glob', type=unicode)
+                              help='Input files glob', type=str)
     align_parser.add_argument('--img-thresh',
                               help='Max duplicate frame delta', type=float)
     align_parser.set_defaults(cmd='align')
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     try:
         import appdirs
     except ImportError:
-        logging.warn("appdirs not installed, not reading site/user config")
+        logging.warning("appdirs not installed, not reading site/user config")
     else:
         config_paths.append(
             os.path.join(
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     if cli_args.cmd == "print_config_paths":
         for config_path in config_paths:
-            print config_path
+            print(config_path)
         sys.exit(0)
 
     # Attempt to open each config file, and update the `cfg` dict with each
@@ -128,7 +128,7 @@ if __name__ == "__main__":
                 if cli_args.cmd in d:
                     cfg.update(d[cli_args.cmd])
         except IOError:
-            logging.warn("Could not open config file %s", config_path)
+            logging.warning("Could not open config file %s", config_path)
         else:
             logging.info("Read config file %s", config_path)
 
@@ -159,4 +159,3 @@ if __name__ == "__main__":
         with open(cfg['filtered_files'], 'w') as f:
             for fname in filtered_files:
                 f.write("{}\n".format(fname))
-
